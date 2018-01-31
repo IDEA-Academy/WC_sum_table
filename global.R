@@ -6,13 +6,16 @@ library(wordcloud)
 library("SnowballC")
 library("RColorBrewer")
 library(dplyr)
+library("shinythemes")
 
 setwd("C:/Users/AT003502/Documents/Emma/FB dashboard/facebook data with organic likes/Dashboard/")
 
 Deskpro<-read.csv("DeskPro.csv", header=T)
 # The list of valid services
 service <- list(Deskpro$Service)
-URL_count<-aggregate(data.frame(count=Deskpro$Referrer.URL), list(value=Deskpro$Referrer.URL, Deskpro$Service),length)
+Deskpro2<-Deskpro[Deskpro$Referrer.URL!="n/a",]
+str(Deskpro2)
+URL_count<-aggregate(data.frame(count=Deskpro2$Referrer.URL), list(value=Deskpro2$Referrer.URL, Deskpro2$Service),length)
 head(URL_count,10)
 str(URL_count)
 URL_count<-URL_count[order(-URL_count$count),]
@@ -33,6 +36,9 @@ getTermMatrix <- memoise(function(services) {
   docs <- tm_map(docs, toSpace, "@")
   docs <- tm_map(docs, toSpace, "\\|")
   docs <- tm_map(docs, toSpace, ":")
+  docs <- tm_map(docs, toSpace, "\n")
+  docs <- tm_map(docs, toSpace, "&#039;")
+  
   
   # Convert the text to lower case
   docs <- tm_map(docs, content_transformer(tolower))
@@ -68,10 +74,12 @@ getTermMatrix <- memoise(function(services) {
   d <- data.frame(word = names(v),freq=v)
   head(d,10 )
   set.seed(1234)
+
+  par(bg="NA")
   wordcloud(words = d$word, freq = d$freq, min.freq = 1,
-            max.words=50, random.order=FALSE, rot.per=0.1, 
+            max.words=50,random.order=FALSE,
             colors=brewer.pal(8, "RdYlGn"))
-  
+  #rot.per=0.1,
   sort(rowSums(m),decreasing=TRUE)
   
 })

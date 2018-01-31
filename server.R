@@ -6,11 +6,14 @@ library(memoise)
 library(wordcloud)
 library("SnowballC")
 library("RColorBrewer")
+library("shinythemes")
 
 Deskpro<-read.csv("DeskPro.csv", header=T)
 # The list of valid services
 service <- list(Deskpro$Service)
-URL_count<-aggregate(data.frame(count=Deskpro$Referrer.URL), list(value=Deskpro$Referrer.URL, Deskpro$Service),length)
+Deskpro2<-Deskpro[Deskpro$Referrer.URL!="n/a",]
+str(Deskpro2)
+URL_count<-aggregate(data.frame(count=Deskpro2$Referrer.URL), list(value=Deskpro2$Referrer.URL, Deskpro2$Service),length)
 head(URL_count,10)
 str(URL_count)
 URL_count<-URL_count[order(-URL_count$count),]
@@ -25,7 +28,9 @@ function(input, output, session) {
     if (input$selection != "All") {
       data <- data[data$Service == input$selection,]
     }
-    
+    #else if  (input$selection == "All") {
+    #  data <- Deskpro
+    #}
     docs <- Corpus(VectorSource(data$Message))
     
     inspect(docs)
@@ -34,6 +39,8 @@ function(input, output, session) {
     docs <- tm_map(docs, toSpace, "@")
     docs <- tm_map(docs, toSpace, "\\|")
     docs <- tm_map(docs, toSpace, ":")
+    docs <- tm_map(docs, toSpace, "\n")
+    docs <- tm_map(docs, toSpace, "&#039;")
     
     # Convert the text to lower case
     docs <- tm_map(docs, content_transformer(tolower))
@@ -42,9 +49,9 @@ function(input, output, session) {
     # Remove english common stopwords
     docs <- tm_map(docs, removeWords, stopwords("english"))
     # Remove your own stop word
-    # specify your stopwords as a character vector
-    my_custom_stopwords<-c("What were you trying to do", 
-                           "What were you doing",
+  # specify your stopwords as a character vector
+    my_custom_stopwords<-c("what were you trying to do", 
+                           "what were you doing",
                            "need", 
                            "help",
                            "password", 
@@ -64,14 +71,14 @@ function(input, output, session) {
     docs <- tm_map(docs, stemDocument)
     
     dtm <- TermDocumentMatrix(docs)
-    m <- as.matrix(dtm)
+   m <- as.matrix(dtm)
     v <- sort(rowSums(m),decreasing=TRUE)
     d <- data.frame(word = names(v),freq=v)
     head(d,10 )
-    str(docs)
+   # str(docs)
     set.seed(1234)
     wordcloud(words = d$word, freq = d$freq, min.freq = 1,
-              max.words=50, random.order=FALSE, rot.per=0.35, 
+              max.words=50, random.order=FALSE, 
               colors=brewer.pal(8, "RdYlGn"))
     
     sort(rowSums(m),decreasing=TRUE)
@@ -96,9 +103,11 @@ function(input, output, session) {
   
   output$plot <- renderPlot({
     v<-terms()
-    wordcloud_rep(names(v), v, scale=c(4,0.5),
+    par(bg="NA", mar=rep(1,4))
+    wordcloud_rep(names(v), v,scale=c(5,0.3),
               min.freq = input$freq, max.words=input$max,
-              colors=brewer.pal(8, "RdYlGn"))
+              random.order=F,
+              colors=brewer.pal(8, "RdYlGn"))#scale=c(3,0.),
     })
   
   # output$words_Plot <- renderPlot({
