@@ -7,6 +7,7 @@ library(wordcloud)
 library("SnowballC")
 library("RColorBrewer")
 library("shinythemes")
+library(DT)
 
 Deskpro<-read.csv("DeskPro.csv", header=T)
 # The list of valid services
@@ -118,12 +119,12 @@ function(input, output, session) {
   
   
   # Filter data based on selections
-  output$table <- DT::renderDataTable(DT::datatable({
+  output$table <- DT::renderDataTable(DT::datatable(rownames=F,{
     data <-URL_count
     if (input$Service != "All") {
       data <- data[data$Service == input$Service,]
     }
     data
   }))
-  
 }
+  
