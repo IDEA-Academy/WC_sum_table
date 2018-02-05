@@ -22,6 +22,7 @@ names(URL_count)=c("URL", "Service","Count")
 ##URL_count=URL_count[c("Service", "Count", "URL")]
 URL_count=data.frame(URL_count$Service, URL_count$Count, URL_count$URL)
 URL_count
+names(URL_count)=c("Service", "Reported issues","URL")
 
 function(input, output, session) {
   
