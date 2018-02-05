@@ -21,7 +21,8 @@ str(URL_count)
 URL_count<-URL_count[order(-URL_count$count),]
 names(URL_count)=c("URL", "Service","Count")
 URL_count
-
+URL_count=data.frame(URL_count$Service, URL_count$Count, URL_count$URL)
+URL_count
 # Using "memoise" to automatically cache the results
 getTermMatrix <- memoise(function(services) {
   # Carefluword not to let just any name slip in here; a

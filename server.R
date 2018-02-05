@@ -13,14 +13,15 @@ Deskpro<-read.csv("DeskPro.csv", header=T)
 # The list of valid services
 service <- list(Deskpro$Service)
 Deskpro2<-Deskpro[Deskpro$Referrer.URL!="n/a",]
-str(Deskpro2)
+#str(Deskpro2)
 URL_count<-aggregate(data.frame(count=Deskpro2$Referrer.URL), list(value=Deskpro2$Referrer.URL, Deskpro2$Service),length)
 head(URL_count,10)
 str(URL_count)
 URL_count<-URL_count[order(-URL_count$count),]
 names(URL_count)=c("URL", "Service","Count")
+##URL_count=URL_count[c("Service", "Count", "URL")]
+URL_count=data.frame(URL_count$Service, URL_count$Count, URL_count$URL)
 URL_count
-
 
 function(input, output, session) {
   
