@@ -121,6 +121,7 @@ function(input, output, session) {
   #                     las = 2, names.arg = d[1:10,]$word)
   # })
   data <-URL_count
+  mean_issues<-mean(URL_count$`Reported issues`)
   
   # Filter data based on selections
   output$table <- DT::renderDataTable(DT::datatable(rownames=F,options=list(
@@ -138,8 +139,10 @@ function(input, output, session) {
     }
     data
   })
-  %>%formatStyle(columns='Service',color = 'red', backgroundColor = ' orange', fontWeight = 'bold')
-
+  %>%formatStyle(
+      'Reported issues',
+      backgroundColor = styleInterval(c(mean_issues), c('white', 'red'))
+    )
   )
   
     #))
