@@ -8,6 +8,8 @@ library("SnowballC")
 library("RColorBrewer")
 library("shinythemes")
 library(DT)
+#install.packages("shinydashboard")
+library(shinydashboard)
 
 Deskpro<-read.csv("DeskPro.csv", header=T)
 # The list of valid services
@@ -95,7 +97,7 @@ function(input, output, session) {
   # ...but not for anything else
   isolate({
    withProgress({
-    setProgress(message = "Processing corpus...")
+    setProgress(message = "Updating word cloud...")
     getTermMatrix(input$selection)
     })
   })
@@ -118,15 +120,30 @@ function(input, output, session) {
   #  words_Plot<-barplot(d[1:10,]$freq, 
   #                     las = 2, names.arg = d[1:10,]$word)
   # })
-  
+  data <-URL_count
   
   # Filter data based on selections
-  output$table <- DT::renderDataTable(DT::datatable(rownames=F,{
+  output$table <- DT::renderDataTable(DT::datatable(rownames=F,options=list(
+   # 
+    initComplete = JS(
+    
+      "function(settings, json) {",
+      "$(this.api().table().header()).css({'background-color': '#038fd2', 'color': '#fff'});",
+      "}")
+  ),
+                                                    {
     data <-URL_count
     if (input$Service != "All") {
       data <- data[data$Service == input$Service,]
     }
     data
-  }))
+  })
+  %>%formatStyle(columns='Service',color = 'red', backgroundColor = ' orange', fontWeight = 'bold')
+
+  )
+  
+    #))
+  
+
 }
   
