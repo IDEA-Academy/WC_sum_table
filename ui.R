@@ -1,9 +1,14 @@
 
 #####actual set up of page
 
+header<-dashboardHeader(
+  title="Deskpro Dashboard"
+)
+body <- dashboardBody(
 fluidPage(
-  theme = shinythemes::shinytheme("cosmo"),
-  titlePanel("Deskpro Issues"),
+
+  theme = shinythemes::shinytheme("cerulean"),
+
   ## word cloud
 
   sidebarLayout(
@@ -24,59 +29,28 @@ fluidPage(
   )
 
   ),
-  
-
-      
-  #)
-           
-    #conditionalPanel(
-    # 'input.dataset === "Deskpro"',
-    # helpText("Click the column header to sort a column."),
-    
-
-    
-   # for URL table
-#  fluidRow(
-#    column(3,
-#           selectInput("Service",
-#                       "Service:",
-##                       c("All",
-  #                       unique(as.character(URL_count$Service)))))
-#  ),
-  
-   # mainPanel(
-  #    column(1,
-    #  plotOutput("plot", "500px","500px")
- # ),
 
 fluidRow(
-    column(2,
-           selectInput("Service",
-                       "Service:",
-                       c("All",
-                         unique(as.character(URL_count$Service)))),       
-           DT::dataTableOutput("table")
+    column(width=7,
+           box(width=12,solidHeader=T,title="Number of Reported Issues by Service",
+               collapsible = T,collapsed = T,
+             selectInput("Service",
+                         "Service:",
+                         c("All",
+                           unique(as.character(URL_count$Service)))),       
+             DT::dataTableOutput("table")
            )
-   # mainPanel(
-   #   plotOutput("plot", "400px","600px")
-    
-    #fluidRow(
-   #   column(1,
-             #plotOutput("plot", "400px","600px")
-     # )
-      
-  
-    # mainPanel(
-    #   plotOutput("words_Plot"),
-   # mainPanel(
-    #  tabsetPanel(
-     #   id = 'URL_count',
-      #  tabPanel("URL_count", DT::dataTableOutput("mytable1"))
-        
-        
+           
+           )
+
          )
         )
       )
-  # )  
- # )
-#)
+  )  
+#adds header and sidebar options - to add extra pages to the sidebar
+dashboardPage(
+  header,
+  dashboardSidebar(disable = T),#no extra pages so have disabled this so far
+  body
+
+)
